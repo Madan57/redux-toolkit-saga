@@ -1,56 +1,63 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getCatsFetch } from "./catState";
+import { Counter } from "./features/counter/Counter";
+import "./App.css";
 
 function App() {
+  const cats = useSelector((state) => state.cats.cats);
+  const loading = useSelector((state) => state.cats.isLoading);
+
+  console.log(loading);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCatsFetch());
+  }, [dispatch]);
+
+  console.log(cats);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+      <div className="myCounter">
         <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      </div>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <div>
+          <h1 style={{ textTransform: "uppercase" }}>cat species gallery</h1>
+          <p>
+            Images of different species of cat. Lots of cats for your viewing
+            pleasure.
+          </p>
+          <hr />
+          <div className="gallery">
+            {cats.map((cat) => (
+              <div key={cat.id} className="row">
+                <div className="column column-left">
+                  <img
+                    alt={cat.name}
+                    src={cat?.image?.url}
+                    width={200}
+                    height={200}
+                  />
+                </div>
+                <div className="column column-right">
+                  <h2>{cat.name}</h2>
+                  <h5>Temperament: {cat.temperament} </h5>
+                  <h4 style={{ fontWeight: "bold" }}>
+                    Country code: {cat.country_code}{" "}
+                  </h4>
+                  <p>{cat.description} </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button>VIEW MORE CATS</button>
+        </div>
+      )}
     </div>
   );
 }
